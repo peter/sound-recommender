@@ -66,4 +66,6 @@ open http://localhost:8080/openapi.json
 
 * [FastAPI - Getting Started](https://fastapi.tiangolo.com/#installation)
 
+Alternatives to FastAPI for CRUD APIs with OpenAPI support in Python:
+
 * [Python Example CRUD API (with OpenAPI/Validation)](https://github.com/peter/python-content-api)
