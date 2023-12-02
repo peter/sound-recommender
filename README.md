@@ -1,5 +1,7 @@
 # Sound Recommender
 
+Basic song metadata CRUD API with playlists and recommendations based on playlists. Implemented using [FastAPI](https://fastapi.tiangolo.com).
+
 ## Development Setup
 
 Start the server:
