@@ -1,0 +1,196 @@
+{
+  "collection": {
+    "info": {
+      "_postman_id": "840020f0-ae6c-4fbd-af7d-db82477080b6",
+      "name": "Sound recommender",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "updatedAt": "2023-11-15T11:13:51.000Z",
+      "uid": "31033780-840020f0-ae6c-4fbd-af7d-db82477080b6"
+    },
+    "item": [
+      {
+        "name": "Create sounds",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "6c99cd7f-a7c4-4034-b1c3-a3bce4d24e4e",
+              "exec": [
+                "pm.test(\"Sounds are returned\", () => {",
+                "    pm.expect(pm.response.json()).to.have.property('data')",
+                "    pm.expect(pm.response.json().data).to.be.an('array');",
+                "    pm.expect(pm.response.json().data).to.have.length.greaterThan(0)",
+                "    pm.expect(pm.response.json().data[0]).to.have.property('id');",
+                "    pm.expect(pm.response.json().data[0]).to.have.property('title');",
+                "    pm.globals.set(\"soundId\", pm.response.json().data[0].id)",
+                "})",
+                ""
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "id": "827f458a-d3ef-4d1b-ab69-9aeddd4c8b34",
+        "protocolProfileBehavior": { "disableBodyPruning": true },
+        "request": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"data\": [\n        {\n        \"title\": \"New song\",\n        \"bpm\": 120,\n        \"genres\": [\"pop\"],\n        \"duration_in_seconds\": 120,\n        \"credits\": [\n            {\n                \"name\": \"King Sis\",\n                \"role\": \"VOCALIST\"\n            },\n            {\n                \"name\": \"Ooyy\",\n                \"role\": \"PRODUCER\"\n            }\n        ]\n        }\n    ]\n}",
+            "options": { "raw": { "language": "json" } }
+          },
+          "url": {
+            "raw": "{{baseUrl}}/admin/sounds",
+            "host": ["{{baseUrl}}"],
+            "path": ["admin", "sounds"]
+          },
+          "description": "Creates sound(s), see example payload and tests for more information."
+        },
+        "response": [],
+        "uid": "31033780-827f458a-d3ef-4d1b-ab69-9aeddd4c8b34"
+      },
+      {
+        "name": "Get sounds",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "9a9c9c67-23cc-4a3a-94cc-c837c4eb50a1",
+              "exec": [
+                "pm.test(\"Sounds are returned\", () => {",
+                "    pm.expect(pm.response.json()).to.have.property('data');",
+                "    pm.expect(pm.response.json().data).to.be.an('array');",
+                "    pm.expect(pm.response.json().data).to.have.length.greaterThan(0);",
+                "    pm.expect(pm.response.json().data[0]).to.have.property('title');",
+                "    pm.expect(pm.response.json().data[0]['title']).to.be.a('string');",
+                "    pm.expect(pm.response.json().data[0]['title']).to.have.length.greaterThan(0);",
+                "})"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "id": "e3afe175-f811-47e4-a082-f27009e2bc58",
+        "protocolProfileBehavior": { "disableBodyPruning": true },
+        "request": {
+          "method": "GET",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "",
+            "options": { "raw": { "language": "json" } }
+          },
+          "url": {
+            "raw": "{{baseUrl}}/sounds",
+            "host": ["{{baseUrl}}"],
+            "path": ["sounds"]
+          },
+          "description": "Fetches a list of sounds."
+        },
+        "response": [],
+        "uid": "31033780-e3afe175-f811-47e4-a082-f27009e2bc58"
+      },
+      {
+        "name": "Create playlists",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "51ca9ab5-52d6-44c9-b06f-62aca29752e6",
+              "exec": [
+                "pm.test(\"Playlists are returned\", () => {",
+                "    pm.expect(pm.response.json()).to.have.property('data')",
+                "    pm.expect(pm.response.json().data).to.be.an('array');",
+                "    pm.expect(pm.response.json().data).to.have.length.greaterThan(0);",
+                "    pm.expect(pm.response.json().data[0]).to.have.property('id');",
+                "    pm.globals.set(\"playlistId\", pm.response.json().data[0].id);",
+                "})",
+                ""
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "id": "4e285b56-1bae-4ad0-ab23-f63fb53e3d1d",
+        "protocolProfileBehavior": { "disableBodyPruning": true },
+        "request": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"data\":\n    [\n        {\n            \"title\": \"New playlist\",\n            \"sounds\": [\"{{soundId}}\"]\n        }\n    ]\n}",
+            "options": { "raw": { "language": "json" } }
+          },
+          "url": {
+            "raw": "{{baseUrl}}/playlists",
+            "host": ["{{baseUrl}}"],
+            "path": ["playlists"]
+          },
+          "description": "Creates a new collection of sounds."
+        },
+        "response": [],
+        "uid": "31033780-4e285b56-1bae-4ad0-ab23-f63fb53e3d1d"
+      },
+      {
+        "name": "Get recommended sounds",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "786baacd-0f57-430d-8d8a-189fa6e14d19",
+              "exec": [
+                "pm.test(\"Sounds are returned\", () => {",
+                "    pm.expect(pm.response.json()).to.have.property('data');",
+                "    pm.expect(pm.response.json().data).to.be.an('array');",
+                "    pm.expect(pm.response.json().data).to.have.length.greaterThan(0);",
+                "    pm.expect(pm.response.json().data[0]).to.have.property('title');",
+                "})"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "id": "b5c89257-b95e-41f2-8582-251c5bd60445",
+        "protocolProfileBehavior": { "disableBodyPruning": true },
+        "request": {
+          "method": "GET",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "",
+            "options": { "raw": { "language": "json" } }
+          },
+          "url": {
+            "raw": "{{baseUrl}}/sounds/recommended?playlistId={{playlistId}}",
+            "host": ["{{baseUrl}}"],
+            "path": ["sounds", "recommended"],
+            "query": [{ "key": "playlistId", "value": "{{playlistId}}" }]
+          },
+          "description": "Fetches a list of recommended songs. If you run out of time it's ok to return a random sound here, preferably not the same every time."
+        },
+        "response": [],
+        "uid": "31033780-b5c89257-b95e-41f2-8582-251c5bd60445"
+      }
+    ],
+    "event": [
+      {
+        "listen": "prerequest",
+        "script": {
+          "type": "text/javascript",
+          "exec": [""],
+          "id": "5d42ee37-fae3-45d7-88f7-c4969dfa99ff"
+        }
+      },
+      {
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [""],
+          "id": "a16123e6-b9f4-4c84-a7f1-42148d04e305"
+        }
+      }
+    ],
+    "variable": [{ "key": "baseUrl", "value": "http://localhost:8080" }]
+  }
+}

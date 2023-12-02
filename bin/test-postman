@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+postman collection run postman.json
