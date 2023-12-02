@@ -4,6 +4,19 @@ Basic song metadata CRUD API with playlists and recommendations based on playlis
 
 ## Development Setup
 
+Dependencies:
+
+* Python (tested with 3.11.6)
+* SQLite (comes with Python)
+
+Set up virtual environment and install dependencies:
+
+```sh
+python -m venv venv
+. venv/bin/activate
+pip install -r requirements.txt
+```
+
 Start the server:
 
 ```sh
@@ -65,6 +78,10 @@ open http://localhost:8080/openapi.json
 ## Resources
 
 * [FastAPI - Getting Started](https://fastapi.tiangolo.com/#installation)
+* [Example FastAPI CRUD API with Postgres](https://github.com/jeremyleonardo/books-crud-fastapi)
+* [SQLite in Python](https://docs.python.org/3.11/library/sqlite3.html)
+* [Poetry - Dependency Management](https://python-poetry.org)
+* [Build a CRUD API using FastAPI, Python, and SQLite For New Coders](https://blog.stackademic.com/how-to-build-a-crud-api-using-fastapi-python-sqlite-for-new-coders-2d056333ea20)
 
 Alternatives to FastAPI for CRUD APIs with OpenAPI support in Python:
 
