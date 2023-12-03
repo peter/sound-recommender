@@ -7,7 +7,7 @@ Basic song metadata CRUD API with playlists and recommendations based on playlis
 Dependencies:
 
 * Python (tested with 3.11.6)
-* SQLite (comes with Python)
+* Postgres (tested with PostgreSQL 15 using Postgres.app on Mac)
 
 Set up virtual environment and install dependencies:
 
@@ -39,6 +39,25 @@ OpenAPI spec:
 
 ```sh
 open http://localhost:8080/openapi.json
+```
+
+## Invoking the API with Curl
+
+```sh
+export BASE_URL=http://localhost:8080
+
+# sounds create
+curl -i -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Stairway to Heaven","genres":["pop"],"credits":[{"name":"Led Zeppelin","role":"ARTIST"}]}]}' $BASE_URL/admin/sounds
+
+# sounds get
+curl -i $BASE_URL/sounds/1
+
+# sounds list
+curl -i $BASE_URL/sounds
+
+# sounds update
+
+# sounds delete
 ```
 
 ## Sound Schema
@@ -82,6 +101,13 @@ open http://localhost:8080/openapi.json
 * [SQLite in Python](https://docs.python.org/3.11/library/sqlite3.html)
 * [Poetry - Dependency Management](https://python-poetry.org)
 * [Build a CRUD API using FastAPI, Python, and SQLite For New Coders](https://blog.stackademic.com/how-to-build-a-crud-api-using-fastapi-python-sqlite-for-new-coders-2d056333ea20)
+
+Recommendations:
+
+* [Chroma - Vector Database](https://github.com/chroma-core/chroma)
+* [sqlite-vss](https://github.com/asg017/sqlite-vss)
+* [pgvector](https://github.com/pgvector/pgvector)
+* [Cosine Similarity vs Euclidian Distance](https://www.linkedin.com/pulse/similarity-measures-data-science-euclidean-distance-cosine-wynn#:~:text=Cosine%20similarity%20is%20generally%20preferred,of%20them%20vary%20by%20length.)
 
 Alternatives to FastAPI for CRUD APIs with OpenAPI support in Python:
 
