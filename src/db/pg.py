@@ -6,7 +6,7 @@ import re
 conn = None
 
 SCHEMA_SQL = '''
-  CREATE TABLE IF NOT EXISTS sounds (
+  CREATE TABLE sounds (
       id serial PRIMARY KEY,
       title text NOT NULL,
       genres TEXT[],

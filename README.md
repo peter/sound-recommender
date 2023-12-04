@@ -60,6 +60,27 @@ curl -i $BASE_URL/sounds
 # sounds delete
 ```
 
+## Heroku Deployment
+
+The files [runtime.txt](runtime.txt) and [Procfile](Procfile) were added Python version and start command. Creating and deploying the app with the Heroku CLI:
+
+```sh
+# Create app
+heroku apps:create sound-recommender --region eu
+
+# Add Postgres
+heroku addons:create heroku-postgresql:mini
+
+# Deploy
+git push heroku main
+
+# Create the Postgres schema
+heroku run python -c "import src.db.pg as pg; pg.connect(); pg.create_schema()"
+
+# Open the docs
+heroku open
+```
+
 ## Sound Schema
 
 ```json
@@ -106,6 +127,7 @@ Heroku deployment:
 
 * [gunicorn vs uvicorn](https://stackoverflow.com/questions/59391560/how-to-run-uvicorn-in-heroku)
 * [Heroku Python getting started app](https://github.com/heroku/python-getting-started)
+* [CREATE TABLE IF NOT EXISTS error - pg_class_relname_nsp_index](https://stackoverflow.com/questions/74261789/postgres-create-table-if-not-exists-%E2%87%92-23505)
 
 
 Recommendations:

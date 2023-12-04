@@ -7,7 +7,6 @@ import src.db.pg as pg
 from src.types import Sound
 
 pg.connect()
-pg.create_schema()
 app = FastAPI()
 
 # Root - redirects to OpenAPI documentation
