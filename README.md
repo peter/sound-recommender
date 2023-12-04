@@ -1,6 +1,6 @@
 # Sound Recommender
 
-Basic song metadata CRUD API with playlists and recommendations based on playlists. Implemented using [FastAPI](https://fastapi.tiangolo.com).
+Basic song metadata CRUD API with playlists and recommendations based on playlists. Implemented using [FastAPI](https://fastapi.tiangolo.com) and Postgres.
 
 ## Development Setup
 
@@ -47,7 +47,7 @@ open http://localhost:8080/openapi.json
 export BASE_URL=http://localhost:8080
 
 # Admin sounds create
-curl -i -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Stairway to Heaven","genres":["pop"],"credits":[{"name":"Led Zeppelin","role":"ARTIST"}]}]}' $BASE_URL/admin/sounds
+curl -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Stairway to Heaven","genres":["pop"],"credits":[{"name":"Led Zeppelin","role":"ARTIST"}]}]}' $BASE_URL/admin/sounds | jq
 
 # sounds get
 curl $BASE_URL/sounds/1 | jq

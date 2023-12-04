@@ -5,19 +5,6 @@ import re
 
 conn = None
 
-SCHEMA_SQL = '''
-  CREATE TABLE sounds (
-      id serial PRIMARY KEY,
-      title text NOT NULL,
-      genres TEXT[],
-      bpm integer,
-      duration_in_seconds integer,
-      credits jsonb,
-      created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-      updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-  );
-'''
-
 #############################################################
 #
 # Helper Functions
@@ -94,9 +81,6 @@ def connect():
   conn = psycopg2.connect(DATABASE_URL)
   conn.autocommit = True
 
-def create_schema():
-  execute(SCHEMA_SQL)
-
 def count(table_name, filter=None):
   (where_clauses, where_values) = where_sql(filter)
   sql = f'select count(*) from {table_name} {where_clauses}'
@@ -119,7 +103,6 @@ def create(table_name, doc):
   columns = list(doc.keys())
   assert_valid_columns(columns)
   values = [doc[k] for k in columns]
-  print(f'pm debug pg.create columns={columns} values={values} doc={doc}')
   interpolate_values = ['%s' for _ in values]
   sql = f'INSERT INTO {table_name} ({", ".join(columns)}) VALUES ({", ".join(interpolate_values)}) RETURNING id'
   print(f'pg.create sql={sql}')

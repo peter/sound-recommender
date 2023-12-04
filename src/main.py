@@ -4,7 +4,8 @@ from fastapi import FastAPI, Response, status
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 import src.db.pg as pg
-from src.types import Sound
+import src.models.sound as sound
+from src.models.sound import Sound
 
 pg.connect()
 app = FastAPI()
@@ -17,25 +18,19 @@ def root():
 class SoundsCreateBody(BaseModel):
     data: list[Sound]
 
-def sound_dict(sound: Sound) -> dict:
-    doc = sound.model_dump()
-    del doc['id']
-    doc['credits'] = json.dumps(doc['credits'])
-    return doc
-
-# Admin create sound(s)
+# Admin create sound(s) (one or more sounds)
 @app.post("/admin/sounds")
 # def sounds_create(data: list[Sound]):
 def sounds_create(body: SoundsCreateBody):
     for sound in body.data:
-        id = pg.create('sounds', sound_dict(sound))
+        id = pg.create('sounds', sound.to_db_dict())
         sound.id = id
     return { 'data': body.data }
 
 # Admin update sound
 @app.put("/admin/sounds/{id}")
 def sounds_update(id: int, sound: Sound):
-    result = pg.update('sounds', id, sound_dict(sound))
+    result = pg.update('sounds', id, sound.to_db_dict())
     if result.rowcount > 0:
         return { 'sound': sound }
     else:
@@ -60,7 +55,7 @@ def sounds_get(id: int):
     sound = pg.find_one('sounds', id)
     return { 'data': sound }
 
-# Create playlist(s)
+# Create playlist(s) (one or more playlists)
 @app.post("/playlists")
 def playlists_create():
     return { 'data': [] }
