@@ -102,6 +102,12 @@ curl -i $BASE_URL/sounds
 * [Poetry - Dependency Management](https://python-poetry.org)
 * [Build a CRUD API using FastAPI, Python, and SQLite For New Coders](https://blog.stackademic.com/how-to-build-a-crud-api-using-fastapi-python-sqlite-for-new-coders-2d056333ea20)
 
+Heroku deployment:
+
+* [gunicorn vs uvicorn](https://stackoverflow.com/questions/59391560/how-to-run-uvicorn-in-heroku)
+* [Heroku Python getting started app](https://github.com/heroku/python-getting-started)
+
+
 Recommendations:
 
 * [Chroma - Vector Database](https://github.com/chroma-core/chroma)
