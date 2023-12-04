@@ -82,6 +82,13 @@ heroku pg:psql
 
 # Open the docs
 heroku open
+
+# Try Creating a sound
+export BASE_URL=https://sound-recommender-4853b1ecaf72.herokuapp.com
+curl -i -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Stairway to Heaven","genres":["pop"],"credits":[{"name":"Led Zeppelin","role":"ARTIST"}]}]}' $BASE_URL/admin/sounds
+
+# List sounds
+curl -s $BASE_URL/sounds | jq
 ```
 
 ## Sound Schema
