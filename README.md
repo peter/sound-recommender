@@ -62,7 +62,7 @@ curl -i $BASE_URL/sounds
 
 ## Heroku Deployment
 
-The files [runtime.txt](runtime.txt) and [Procfile](Procfile) were added Python version and start command. Creating and deploying the app with the Heroku CLI:
+The files [runtime.txt](runtime.txt) and [Procfile](Procfile) and they contain the Python version and the start command. The following commands were used to create and deploy the app with the Heroku CLI:
 
 ```sh
 # Create app
@@ -76,6 +76,9 @@ git push heroku main
 
 # Create the Postgres schema
 heroku run python -c "import src.db.pg as pg; pg.connect(); pg.create_schema()"
+
+# Check the database on Heroku with psql
+heroku pg:psql
 
 # Open the docs
 heroku open
