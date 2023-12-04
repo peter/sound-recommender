@@ -46,18 +46,20 @@ open http://localhost:8080/openapi.json
 ```sh
 export BASE_URL=http://localhost:8080
 
-# sounds create
+# Admin sounds create
 curl -i -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Stairway to Heaven","genres":["pop"],"credits":[{"name":"Led Zeppelin","role":"ARTIST"}]}]}' $BASE_URL/admin/sounds
 
 # sounds get
-curl -i $BASE_URL/sounds/1
+curl $BASE_URL/sounds/1 | jq
 
 # sounds list
-curl -i $BASE_URL/sounds
+curl $BASE_URL/sounds | jq
 
-# sounds update
+# Admin sounds update
+curl -i -H "Content-Type: application/json" -X PUT -d '{"title":"Stairway to Hell","genres":["death metal"],"credits":[{"name":"Jakob Marklund","role":"ARTIST"}]}' $BASE_URL/admin/sounds/1
 
-# sounds delete
+# Admin sounds delete
+curl -i -H "Content-Type: application/json" -X DELETE $BASE_URL/admin/sounds/1
 ```
 
 ## Heroku Deployment
@@ -83,7 +85,7 @@ heroku pg:psql
 # Open the docs
 heroku open
 
-# Try Creating a sound
+# Create a sound
 export BASE_URL=https://sound-recommender-4853b1ecaf72.herokuapp.com
 curl -i -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Stairway to Heaven","genres":["pop"],"credits":[{"name":"Led Zeppelin","role":"ARTIST"}]}]}' $BASE_URL/admin/sounds
 
