@@ -1,22 +1,18 @@
 import json
 from pydantic import BaseModel
-import src.db.pg as pg
 
-SCHEMA_SQL_CREATE = '''
-  CREATE TABLE IF NOT EXISTS playlists (
+TABLE_NAME = 'playlists'
+
+SCHEMA_CREATE = f'''
+  CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
       id serial PRIMARY KEY,
-      title text NOT NULL
-  );
-
-  CREATE TABLE IF NOT EXISTS playlists_sounds (
-      playlist_id integer references playlists(id) on delete cascade,
-      sound_id integer references sounds(id) on delete cascade
+      title text NOT NULL,
+      sounds jsonb NOT NULL
   );
 '''
 
-SCHEMA_SQL_DROP = '''
-  DROP TABLE IF EXISTS playlists_sounds;
-  DROP TABLE IF EXISTS playlists;
+SCHEMA_DROP = f'''
+  DROP TABLE IF EXISTS {TABLE_NAME};
 '''
 
 class Playlist(BaseModel):
@@ -24,8 +20,8 @@ class Playlist(BaseModel):
     title: str
     sounds: list[int]
 
-def create_schema():
-  pg.execute(SCHEMA_SQL_CREATE)
-
-def drop_schema():
-  pg.execute(SCHEMA_SQL_DROP)
+    def to_db(self) -> dict:
+        doc = self.model_dump()
+        del doc['id']
+        doc['sounds'] = json.dumps(doc['sounds'])
+        return doc
