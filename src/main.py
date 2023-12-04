@@ -3,6 +3,7 @@ from fastapi import FastAPI, Response, status
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 import src.db.pg as pg
+import numpy as np
 
 import src.models.sound as sound
 from src.models.sound import Sound
@@ -21,6 +22,17 @@ app = FastAPI()
 @app.get("/")
 def root():
     return RedirectResponse(url='/docs')
+
+##############################################
+# Recommendation endpoints
+##############################################
+
+# Get recommended sounds from playlist
+@app.get("/sounds/recommended")
+def sounds_recommended():
+    embedding = np.array([9, 2, 5])
+    data = pg.query(f'SELECT * FROM {sound.TABLE_NAME} ORDER BY embedding <=> %s LIMIT 5', (embedding,))
+    return { 'data': sound.format_response(data) }
 
 ##############################################
 # Sound endpoints
@@ -57,14 +69,14 @@ def sounds_delete(id: int):
 # List sounds
 @app.get("/sounds")
 def sounds_list():
-    sounds = pg.find(sound.TABLE_NAME)
-    return { 'data': sounds }
+    data = pg.find(sound.TABLE_NAME)
+    return { 'data': sound.format_response(data) }
 
 # Get sound
 @app.get("/sounds/{id}")
 def sounds_get(id: int):
     data = pg.find_one(sound.TABLE_NAME, id)
-    return { 'data': data }
+    return { 'data': sound.format_response(data) }
 
 ##############################################
 # Playlist endpoints
@@ -108,12 +120,3 @@ def playlists_delete(id: int):
     result = pg.delete(playlist.TABLE_NAME, id)
     status_code = status.HTTP_200_OK if result.rowcount > 0 else status.HTTP_404_NOT_FOUND
     return Response(status_code=status_code)
-
-##############################################
-# Recommendation endpoints
-##############################################
-
-# Get recommended sounds from playlist
-@app.get("/sounds/recommended")
-def sounds_recommended():
-    return { 'data': [] }

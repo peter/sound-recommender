@@ -7,9 +7,9 @@ Basic song metadata CRUD API with playlists and recommendations based on playlis
 Dependencies:
 
 * Python (tested with 3.11.6)
-* Postgres (tested with PostgreSQL 15 using Postgres.app on Mac)
+* Postgres (tested with PostgreSQL 15 using [Postgres.app](https://postgresapp.com/) on Mac) with the [pgvector extension](https://github.com/pgvector/pgvector)
 
-Set up virtual environment and install dependencies:
+Set up virtual environment and install Python libraries:
 
 ```sh
 python -m venv venv
@@ -17,7 +17,14 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-Make sure you have Postgres installed and running locally and create the schema:
+Make sure you have Postgres installed and running locally and create the database and the pgvector extension:
+
+```sh
+createdb -U postgres sound-recommender
+psql -U postgres sound-recommender -c 'CREATE EXTENSION vector;'
+```
+
+Run the migration to create the database tables:
 
 ```sh
 bin/schema-migrate
@@ -53,13 +60,13 @@ open http://localhost:8080/openapi.json
 export BASE_URL=http://localhost:8080
 
 # Admin sounds create
-curl -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Stairway to Heaven","genres":["pop"],"credits":[{"name":"Led Zeppelin","role":"ARTIST"}]}]}' $BASE_URL/admin/sounds | jq
+curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Stairway to Heaven","genres":["pop"],"credits":[{"name":"Led Zeppelin","role":"ARTIST"}]}]}' $BASE_URL/admin/sounds | jq
 
 # sounds get
-curl $BASE_URL/sounds/1 | jq
+curl -s $BASE_URL/sounds/1 | jq
 
 # sounds list
-curl $BASE_URL/sounds | jq
+curl -s $BASE_URL/sounds | jq
 
 # Admin sounds update
 curl -i -H "Content-Type: application/json" -X PUT -d '{"title":"Stairway to Hell","genres":["death metal"],"credits":[{"name":"Jakob Marklund","role":"ARTIST"}]}' $BASE_URL/admin/sounds/1
@@ -79,6 +86,9 @@ curl -i -H "Content-Type: application/json" -X PUT -d '{"title":"Greatest of all
 # Get playlist
 curl -s $BASE_URL/playlists/1 | jq
 
+# Get recommendations
+curl -s $BASE_URL/sounds/recommended?playlistId=1 | jq
+
 # Delete playlist
 curl -i -X DELETE $BASE_URL/playlists/1
 
@@ -94,8 +104,14 @@ The files [runtime.txt](runtime.txt) and [Procfile](Procfile) and they contain t
 # Create app
 heroku apps:create sound-recommender --region eu
 
-# Add Postgres
-heroku addons:create heroku-postgresql:mini
+# Add Postgres with pgvector support
+heroku addons:create heroku-postgresql:standard-0
+
+# See status of Postgres addon
+heroku addons
+
+# Enable pgvector extension
+heroku pg:psql -c 'CREATE EXTENSION vector'
 
 # Deploy
 git push heroku main
@@ -106,6 +122,9 @@ heroku run bin/schema-migrate
 # Check the database on Heroku with psql
 heroku pg:psql
 
+# See info about your database
+heroku pg:info
+
 # Open the docs
 heroku open
 
@@ -115,6 +134,9 @@ curl -i -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Stair
 
 # List sounds
 curl -s $BASE_URL/sounds | jq
+
+# Run postman tests
+BASE_URL=https://sound-recommender-4853b1ecaf72.herokuapp.com bin/test-postman
 ```
 
 ## Sound Schema
@@ -171,9 +193,11 @@ Heroku deployment:
 
 Recommendations:
 
+* [pgvector](https://github.com/pgvector/pgvector)
+* [pgvector-python](https://github.com/pgvector/pgvector-python)
+* [pgvector support on Heroku](https://blog.heroku.com/pgvector-launch)
 * [Chroma - Vector Database](https://github.com/chroma-core/chroma)
 * [sqlite-vss](https://github.com/asg017/sqlite-vss)
-* [pgvector](https://github.com/pgvector/pgvector)
 * [Cosine Similarity vs Euclidian Distance](https://www.linkedin.com/pulse/similarity-measures-data-science-euclidean-distance-cosine-wynn#:~:text=Cosine%20similarity%20is%20generally%20preferred,of%20them%20vary%20by%20length.)
 
 Song Metadata:

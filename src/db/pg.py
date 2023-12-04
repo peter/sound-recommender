@@ -1,5 +1,6 @@
 import psycopg2
 import psycopg2.extras
+from pgvector.psycopg2 import register_vector
 import os
 import re
 
@@ -80,6 +81,7 @@ def connect():
   global conn
   conn = psycopg2.connect(DATABASE_URL)
   conn.autocommit = True
+  register_vector(conn)
 
 def count(table_name, filter=None):
   (where_clauses, where_values) = where_sql(filter)
