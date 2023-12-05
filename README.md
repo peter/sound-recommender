@@ -1,13 +1,15 @@
 # Sound Recommender
 
-Basic song metadata CRUD API with playlists and recommendations based on playlists. Implemented using [FastAPI](https://fastapi.tiangolo.com) and Postgres.
+Basic song metadata CRUD API with playlists and recommendations based on playlists. Implemented using [FastAPI](https://fastapi.tiangolo.com) and Postgres + pgvector with OpenAI embeddings for recommendations.
 
 ## Development Setup
 
 Dependencies:
 
 * Python (tested with 3.11.6)
-* Postgres (tested with PostgreSQL 15 using [Postgres.app](https://postgresapp.com/) on Mac) with the [pgvector extension](https://github.com/pgvector/pgvector)
+* Postgres (tested with PostgreSQL 15 using [Postgres.app](https://postgresapp.com/) on Mac)
+* The [pgvector extension](https://github.com/pgvector/pgvector) for embeddings
+* An OpenAI API token in the environment variable `OPENAI_API_KEY`
 
 Set up virtual environment and install Python libraries:
 
@@ -15,6 +17,20 @@ Set up virtual environment and install Python libraries:
 python -m venv venv
 . venv/bin/activate
 pip install -r requirements.txt
+```
+
+If you are using Postgres.app on Mac then the pgvector installation should look something like this:
+
+```sh
+git clone --branch v0.5.1 https://github.com/pgvector/pgvector.git
+cd pgvector
+make
+export PG_CONFIG=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config
+# NOTE: need to permit terminal in Mac to modify add/delete other apps
+sudo --preserve-env=PG_CONFIG make install
+# You can check the .so file is installed here:
+ls -l /Applications/Postgres.app/Contents/Versions/15/lib/postgresql
+# You should now be able to run 'CREATE EXTENSION vector;' in your Postgres database, see below
 ```
 
 Make sure you have Postgres installed and running locally and create the database and the pgvector extension:
@@ -145,6 +161,10 @@ heroku pg:psql
 
 # See info about your database
 heroku pg:info
+
+# Add the OPENAI_API_KEY environment variable
+heroku config:set OPENAI_API_KEY=...
+heroku config
 
 # Open the docs
 heroku open
