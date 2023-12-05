@@ -29,9 +29,22 @@ def root():
 
 # Get recommended sounds from playlist
 @app.get("/sounds/recommended")
-def sounds_recommended():
-    embedding = np.array([9, 2, 5])
-    data = pg.query(f'SELECT * FROM {sound.TABLE_NAME} ORDER BY embedding <=> %s LIMIT 5', (embedding,))
+def sounds_recommended(playlistId: int):
+    playlist_obj = pg.find_one(playlist.TABLE_NAME, playlistId)
+    if not playlist_obj or not playlist_obj['sounds']:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+    sound_id = playlist_obj['sounds'][0]
+    # TODO: average embedding over playlist?
+    sound_obj = pg.find_one(sound.TABLE_NAME, sound_id)
+    if not sound_obj or sound_obj['openai_embedding'] is None:
+        return Response(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    openai_embedding = sound_obj['openai_embedding']
+    data = pg.query(f'''
+        SELECT *
+        FROM {sound.TABLE_NAME}
+        WHERE id not in %s
+        ORDER BY openai_embedding <=> %s LIMIT 3
+    ''', (tuple(playlist_obj['sounds']), openai_embedding,))
     return { 'data': sound.format_response(data) }
 
 ##############################################
@@ -70,6 +83,8 @@ def sounds_delete(id: int):
 @app.get("/sounds")
 def sounds_list():
     data = pg.find(sound.TABLE_NAME)
+    for doc in data:
+        print(sound.sound_text(doc))
     return { 'data': sound.format_response(data) }
 
 # Get sound

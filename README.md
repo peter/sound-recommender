@@ -59,8 +59,29 @@ open http://localhost:8080/openapi.json
 ```sh
 export BASE_URL=http://localhost:8080
 
-# Admin sounds create
-curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Stairway to Heaven","genres":["pop"],"credits":[{"name":"Led Zeppelin","role":"ARTIST"}]}]}' $BASE_URL/admin/sounds | jq
+# Admin sounds create - Stairway to Heaven / Led Zeppelin
+curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Stairway to Heaven","genres":["rock"],"credits":[{"name":"Led Zeppelin","role":"ARTIST"}],"bpm":82}]}' $BASE_URL/admin/sounds | jq
+
+# Admin sounds create - Halo / Beyonce
+curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Halo","genres":["dance pop"],"credits":[{"name":"Beyonce","role":"ARTIST"}],"bpm":80}]}' $BASE_URL/admin/sounds | jq
+
+# Admin sounds create - Blank Space / Taylor Swift
+curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Blank Space","genres":["pop"],"credits":[{"name":"Taylor Swift","role":"ARTIST"}],"bpm":96}]}' $BASE_URL/admin/sounds | jq
+
+# Admin sounds create - Hips Don't Lie / Shakira Featuring Wyclef Jean
+curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Hips Dont Lie","genres":["latin pop","reggaeton"],"credits":[{"name":"Shakira Featuring Wyclef Jean","role":"ARTIST"}],"bpm":100}]}' $BASE_URL/admin/sounds | jq
+
+# Admin sounds create - Wrecking Ball / Miley Cyrus
+curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Wrecking Ball","genres":["pop"],"credits":[{"name":"Miley Cyrus","role":"ARTIST"}],"bpm":120}]}' $BASE_URL/admin/sounds | jq
+
+# Admin sounds create - Livin' La Vida Loca / Ricky Martin
+curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Livin La Vida Loca","genres":["latin pop","dance"],"credits":[{"name":"Ricky Martin","role":"ARTIST"}],"bpm":178}]}' $BASE_URL/admin/sounds | jq
+
+# Admin sounds create - Single Ladies (Put A Ring On It) / Beyonce
+curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Single Ladies (Put A Ring On It)","genres":["dance pop","r&b"],"credits":[{"name":"Beyonce","role":"ARTIST"}],"bpm":97}]}' $BASE_URL/admin/sounds | jq
+
+# Admin sounds create - Master of Puppets / Metallica
+curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Master of Puppets","genres":["thrash metal"],"credits":[{"name":"Metallica","role":"ARTIST"}],"bpm":220}]}' $BASE_URL/admin/sounds | jq
 
 # sounds get
 curl -s $BASE_URL/sounds/1 | jq
@@ -196,6 +217,7 @@ Recommendations:
 * [pgvector](https://github.com/pgvector/pgvector)
 * [pgvector-python](https://github.com/pgvector/pgvector-python)
 * [pgvector support on Heroku](https://blog.heroku.com/pgvector-launch)
+* [pgvector: Fewer dimensions are better](https://supabase.com/blog/fewer-dimensions-are-better-pgvector)
 * [Chroma - Vector Database](https://github.com/chroma-core/chroma)
 * [sqlite-vss](https://github.com/asg017/sqlite-vss)
 * [Cosine Similarity vs Euclidian Distance](https://www.linkedin.com/pulse/similarity-measures-data-science-euclidean-distance-cosine-wynn#:~:text=Cosine%20similarity%20is%20generally%20preferred,of%20them%20vary%20by%20length.)
@@ -205,6 +227,7 @@ Song Metadata:
 * [Spotify - All Time Top 2000s Mega Dataset](https://www.kaggle.com/datasets/iamsumat/spotify-top-2000s-mega-dataset)
 * [Most Streamed Spotify Songs 2023](https://www.kaggle.com/datasets/nelgiriyewithana/top-spotify-songs-2023)
 * [Billboard top 100 Song/Artist](https://www.kaggle.com/datasets/dhruvildave/billboard-the-hot-100-songs/data)
+* [FMA: A Dataset For Music Analysis](https://github.com/mdeff/fma)
 
 Alternatives to FastAPI for CRUD APIs with OpenAPI support in Python:
 
