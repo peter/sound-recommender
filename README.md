@@ -121,11 +121,14 @@ curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Singl
 # Admin sounds create - Master of Puppets / Metallica
 curl -s -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Master of Puppets","genres":["thrash metal"],"credits":[{"name":"Metallica","role":"ARTIST"}],"bpm":220}]}' $BASE_URL/admin/sounds | jq
 
-# sounds get
+# Get sounds
 curl -s $BASE_URL/sounds/1 | jq
 
-# sounds list
+# List sounds
 curl -s $BASE_URL/sounds | jq
+
+# List sounds by metallica
+curl -s $BASE_URL/sounds?query=metallica | jq
 
 # Admin sounds update
 curl -i -H "Content-Type: application/json" -X PUT -d '{"title":"Stairway to Hell","genres":["death metal"],"credits":[{"name":"Jakob Marklund","role":"ARTIST"}]}' $BASE_URL/admin/sounds/1
