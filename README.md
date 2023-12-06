@@ -9,6 +9,7 @@ Basic song metadata CRUD API with playlists and recommendations based on playlis
 * I did not have time to implement any unit or system/http level tests (other than the Postman test collection)
 * We do not check that sound IDs in playlists actually exist (no referential integrity there)
 * I did not have time to add linting or type checking or automatic code formatting
+* It probably would have been cleaner to use a database library like SQLAlchemy instead of using psycopg2 directly. However, I had some psycopg2 wrapper code from a previous project that I was able to reuse and ended up never getting around to replacing it with SQLAlchemy.
 
 ## How to Evaluate this System without too much Installation
 
