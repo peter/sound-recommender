@@ -31,23 +31,24 @@ def get_sound_ids_and_embedding(playlistId, soundId):
         ''', (soundId,))
     return (sound_ids, openai_embedding)
 
-def get_pgvector_similar(openai_embedding, sound_ids, similarityMetric):
+def get_pgvector_similar(openai_embedding, sound_ids, limit, similarityMetric):
     similarity_operator = '<=>' if similarityMetric == 'cosine_similarity' else '<->'
-    sort_order = 'DESC' if similarityMetric == 'cosine_similarity' else 'ASC'
-    data = pg.query(f'''
+    sql = f'''
         SELECT *
         FROM {sound_model.TABLE_NAME}
         WHERE id not in %s
         AND openai_embedding is NOT NULL
-        ORDER BY openai_embedding {similarity_operator} %s {sort_order}
-        LIMIT 3
-    ''', (tuple(sound_ids), openai_embedding,))
+        ORDER BY openai_embedding {similarity_operator} %s
+        LIMIT {limit}
+    '''
+    print(sql)
+    data = pg.query(sql, (tuple(sound_ids), openai_embedding,))
     for doc in data:
         doc['euclidian_distance'] = euclidian_distance(openai_embedding, doc['openai_embedding'])
         doc['cosine_similarity'] = cosine_similarity(openai_embedding, doc['openai_embedding'])
     return data
 
-def get_all_similar(openai_embedding, sound_ids, similarityMetric):
+def get_all_similar(openai_embedding, sound_ids, limit, similarityMetric):
     data_unsorted = pg.query(f'''
         SELECT *
         FROM {sound_model.TABLE_NAME}
@@ -58,7 +59,8 @@ def get_all_similar(openai_embedding, sound_ids, similarityMetric):
         doc['euclidian_distance'] = euclidian_distance(openai_embedding, doc['openai_embedding'])
         doc['cosine_similarity'] = cosine_similarity(openai_embedding, doc['openai_embedding'])
     reverse = True if similarityMetric == 'cosine_similarity' else False
-    return list(sorted(data_unsorted, key=lambda doc: doc[similarityMetric], reverse=reverse))
+    data_sorted = list(sorted(data_unsorted, key=lambda doc: doc[similarityMetric], reverse=reverse))
+    return data_sorted[0:limit]
 
 # Get recommended sounds from playlist or sound
 class SoundRecommendation(Sound):
@@ -70,12 +72,13 @@ class RecommenderResponseBody(BaseModel):
 def sounds_recommended(
     playlistId: int | None = None,
     soundId: int | None = None,
+    limit: int | None = 5,
     strategy: str | None = 'pgvector',
     similarityMetric: str | None = 'cosine_similarity'
 ) -> RecommenderResponseBody:
     if not playlistId and not soundId:
         return Response(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
-    if not strategy in ('pgvector', 'all'):
+    if not strategy in ('pgvector', 'memory'):
         return Response(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
     if not similarityMetric in ('cosine_similarity', 'euclidian_distance'):
         return Response(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
@@ -85,9 +88,9 @@ def sounds_recommended(
         return Response(status_code=status.HTTP_404_NOT_FOUND)
 
     if strategy == 'pgvector':
-        data = get_pgvector_similar(openai_embedding, sound_ids, similarityMetric)
-    elif strategy == 'all':
-        data = get_all_similar(openai_embedding, sound_ids, similarityMetric)
+        data = get_pgvector_similar(openai_embedding, sound_ids, limit, similarityMetric)
+    elif strategy == 'memory':
+        data = get_all_similar(openai_embedding, sound_ids, limit, similarityMetric)
         print(data)
     else:
         return Response(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)

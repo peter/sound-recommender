@@ -151,13 +151,14 @@ curl -i -H "Content-Type: application/json" -X PUT -d '{"title":"Greatest of all
 curl -s $BASE_URL/playlists/1 | jq
 
 # Get recommendation for playlist
+# Note that you get similariy scores in the list of recommendations
 curl -s $BASE_URL/sounds/recommended?playlistId=1 | jq
 
 # Get recommendation for sound
 curl -s $BASE_URL/sounds/recommended?soundId=1 | jq
 
-# Get recommendation for sound without using pgvector (returns all sounds with similarity scores)
-curl -s "$BASE_URL/sounds/recommended?strategy=all&soundId=1" | jq
+# Get recommendation for sound without using pgvector (does similarity sort in memory based on all sounds)
+curl -s "$BASE_URL/sounds/recommended?strategy=memory&soundId=1" | jq
 
 # Delete playlist
 curl -i -X DELETE $BASE_URL/playlists/1
