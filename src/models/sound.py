@@ -1,6 +1,7 @@
 import json
 from pydantic import BaseModel
 from src.embedding.openai import get_embedding as get_openai_embedding
+from datetime import datetime
 
 TABLE_NAME = 'sounds'
 
@@ -13,6 +14,7 @@ SCHEMA_CREATE = f'''
       duration_in_seconds integer,
       credits jsonb,
       openai_embedding vector(1536),
+      description TEXT,
       created_at TIMESTAMP NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMP NOT NULL DEFAULT NOW()
   );
@@ -33,28 +35,22 @@ class Sound(BaseModel):
     bpm: int | None = None
     duration_in_seconds: int | None = None
     credits: list[Credit]
-    openai_embedding: list[float] | None = None
+    description: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
     def to_db(self) -> dict:
         doc = self.model_dump()
-        del doc['id']
-        text = sound_text(doc)
-        doc['openai_embedding'] = get_openai_embedding(text)
+        if 'id' in doc:
+         del doc['id']
+        if 'created_at' in doc:
+         del doc['created_at']
+        doc['updated_at'] = datetime.now()
+        description = sound_description(doc)
+        doc['description'] = description
+        doc['openai_embedding'] = get_openai_embedding(description)
         doc['credits'] = json.dumps(doc['credits'])
         return doc
-
-def to_response(doc: dict) -> dict:
-  # FastAPI JSON serialize does not work with numpy arrays, see:
-  # https://stackoverflow.com/questions/71102658/how-can-i-return-a-numpy-array-using-fastapi
-  response_doc = { **doc }
-  del response_doc['openai_embedding'] # this vector is large and not super useful to the end user
-  return response_doc
-
-def format_response(data: dict) -> dict:
-  if type(data) == list:
-     return [to_response(doc) for doc in data]
-  else:
-     return to_response(data)
 
 def credit_text(credit: dict) -> str:
    if credit['role']:
@@ -64,7 +60,7 @@ def credit_text(credit: dict) -> str:
 
 # Create a textual representation of a sound, something like:
 # "Sunrise by Norah Jones in genre adult standards with bpm 157"
-def sound_text(doc: dict) -> str:
+def sound_description(doc: dict) -> str:
    parts = []
    if doc['title']:
       parts.append(doc['title'])

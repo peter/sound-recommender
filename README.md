@@ -2,6 +2,13 @@
 
 Basic song metadata CRUD API with playlists and recommendations based on playlists. Implemented using [FastAPI](https://fastapi.tiangolo.com) and Postgres + pgvector with OpenAI embeddings for recommendations.
 
+## Limitations/Scope/Discussion
+
+* Using OpenAPI embeddings as the recommendation engine may not be ideal (the vectors are quite large and the recommendations not super strong) but at least it's an easy way to get basic recommendation support. As an alternative to using an LLM (Large Language Model) we could have matched just on words and/or have come up with our own algorithm for sound distance that might have yielded better recommendation results. However, such an approach would have been limited in that it does not necessarily have the semantic knowledge/relationship of words that an LLM has (i.e. which genres/artists are related etc.).
+* I did not have time to implement any unit or system/http level tests (other than the Postman test collection)
+* We do not check that sound IDs in playlists actually exist (no referential integrity there)
+* I did not have time to add linting or type checking or automatic code formatting
+
 ## Development Setup
 
 Dependencies:
@@ -70,6 +77,14 @@ OpenAPI spec:
 open http://localhost:8080/openapi.json
 ```
 
+## Test Data for Recommendations
+
+To test the strength of recommendations I used a [Spotify dataset from Kaggle](https://www.kaggle.com/datasets/iamsumat/spotify-top-2000s-mega-dataset) that can be ingested with this script:
+
+```sh
+bin/ingest-test-data
+```
+
 ## Invoking the API with Curl
 
 ```sh
@@ -111,11 +126,11 @@ curl -i -H "Content-Type: application/json" -X PUT -d '{"title":"Stairway to Hel
 # Create playlist
 curl -H "Content-Type: application/json" -X POST -d '{"data":[{"title":"Greatest of all time", "sounds":[1]}]}' $BASE_URL/playlists
 
-# List playlists
-curl -s $BASE_URL/playlists/1 | jq
-
 # Get playlist
 curl -s $BASE_URL/playlists/1 | jq
+
+# List playlist
+curl -s $BASE_URL/playlists | jq
 
 # Update playlist
 curl -i -H "Content-Type: application/json" -X PUT -d '{"title":"Greatest of all time!!!", "sounds":[1]}' $BASE_URL/playlists/1

@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+
+import os
+import json
+import requests
+import traceback
+
+BASE_URL = os.environ.get('BASE_URL', 'http://localhost:8080')
+
+def read_jsonl_file(file_path):
+    with open(file_path, 'r') as json_file:
+        json_lines = list(json_file)
+    return [json.loads(line) for line in json_lines]
+
+def get_sound(doc):
+    return {
+            'title': doc['Title'],
+            'genres': [doc['Top Genre']],
+            'bpm': int(doc['Beats Per Minute (BPM)']),
+            'credits': [{ 'name': doc['Artist'], 'role': 'ARTIST'}]
+    }
+
+def ingest_doc(doc):
+    try:
+        sound = get_sound(doc)
+        print(sound)
+        body = { 'data': [sound] }
+        create_url = f'{BASE_URL}/admin/sounds'
+        response = requests.post(create_url, json=body)
+        response.raise_for_status()
+        print(response.status_code)
+    except Exception as error:
+      print(f'error thrown during ingestion', error, traceback.format_exc())
+
+file_path = 'test/data/spotify-top-2000.jsonl'
+docs = read_jsonl_file(file_path)
+for index, doc in enumerate(docs):
+    print(f'Ingesting {index + 1}/{len(docs)}')
+    ingest_doc(doc)

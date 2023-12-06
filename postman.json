@@ -37,7 +37,7 @@
           "header": [],
           "body": {
             "mode": "raw",
-            "raw": "{\n    \"data\": [\n        {\n        \"title\": \"New song\",\n        \"bpm\": 120,\n        \"genres\": [\"pop\"],\n        \"duration_in_seconds\": 120,\n        \"credits\": [\n            {\n                \"name\": \"King Sis\",\n                \"role\": \"VOCALIST\"\n            },\n            {\n                \"name\": \"Ooyy\",\n                \"role\": \"PRODUCER\"\n            }\n        ]\n        }\n    ]\n}",
+            "raw": "{\"data\": [{\"title\": \"New song\",\"bpm\": 120,\"genres\": [\"pop\"],\"duration_in_seconds\": 120,\"credits\":[{\"name\": \"King Sis\",\"role\": \"VOCALIST\"},{\"name\": \"Ooyy\",\"role\": \"PRODUCER\"}]}, {\"title\": \"Great song\",\"bpm\": 125,\"genres\": [\"pop\"],\"duration_in_seconds\": 120,\"credits\":[{\"name\": \"King Bro\",\"role\": \"VOCALIST\"},{\"name\": \"Ooyy\",\"role\": \"PRODUCER\"}]}]}",
             "options": { "raw": { "language": "json" } }
           },
           "url": {

@@ -27,7 +27,7 @@ def where_sql(filter):
   columns = filter.keys()
   def clause(column):
     if filter[column]['op'] == 'contains':
-      return f'{column} like %s'
+      return f'{column} ilike %s'
     elif filter[column]['op'] == 'lt':
       return f'{column} < %s'
     elif filter[column]['op'] == 'gt':
@@ -66,9 +66,17 @@ def query(*args):
     cur.execute(*args)
     return list(map(dict, cur.fetchall()))
 
+def query_values(*args):
+    rows = query(*args)
+    return [next(iter(row.values())) for row in rows]    
+
 def query_one(*args):
     rows = query(*args)
     return rows[0] if len(rows) > 0 else None
+
+def query_one_value(*args):
+    row = query_one(*args)
+    return next(iter(row.values())) if row else None
 
 #############################################################
 #
