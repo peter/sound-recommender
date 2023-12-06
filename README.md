@@ -10,6 +10,7 @@ Basic song metadata CRUD API with playlists and recommendations based on playlis
 * We do not check that sound IDs in playlists actually exist (no referential integrity there)
 * I did not have time to add linting or type checking or automatic code formatting
 * It probably would have been cleaner to use a database library like SQLAlchemy instead of using psycopg2 directly. However, I had some psycopg2 wrapper code from a previous project that I was able to reuse and ended up never getting around to replacing it with SQLAlchemy.
+* I did not particularly take performance/scalability concerns into account when designing this system. For example I did not investigate using [asynchronous FastAPI code](https://fastapi.tiangolo.com/async/#conclusion).
 
 ## How to Evaluate this System without too much Installation
 
