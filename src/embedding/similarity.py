@@ -13,6 +13,4 @@ def euclidian_distance(embedding1, embedding2) -> float:
 def combine_embeddings(embeddings):
     if not embeddings:
         return None
-    # We could preserve the average norm of the embeddings, but the norm does not matter much,
-    # at least not for cosine_similarity
-    return reduce(lambda a, b: a + b, embeddings)
+    return reduce(lambda a, b: a + b, embeddings) / len(embeddings)
