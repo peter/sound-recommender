@@ -4,7 +4,7 @@ Basic song metadata CRUD API with playlists and recommendations based on playlis
 
 ## Limitations/Scope/Discussion
 
-* Using OpenAPI embeddings as the recommendation engine may not be ideal (the vectors are quite large and the recommendations not super strong) but at least it's an easy way to get basic recommendation support. As an alternative to using an LLM (Large Language Model) we could have matched just on words and/or have come up with our own algorithm for sound distance that may or may not have worked better. However, such an approach would have been limited in that it does not necessarily have the semantic knowledge/relationship of words that an LLM does (i.e. which genres/artists are related etc.).
+* Using OpenAPI embeddings as the recommendation engine may not be ideal (the vectors are quite large and the recommendations not super strong) but at least it's an easy way to get basic recommendation support. As an alternative to using an LLM (Large Language Model) we could have matched just on words and/or have come up with our own algorithm for sound distance that may or may not have worked better. However, such an approach would have been limited in that it does not necessarily have the semantic knowledge/relationship of words that an LLM does (i.e. which genres/artists are related etc.). An even simpler approach to recommendations would be to first return other songs by the same artist and then return other songs in the same genre. Similarly I think the OpenAI recommendations probably would have been better if they had been based on only artist (credits) and genre (excluding song title and bpm as I believe they are less relevant).
 * The original Postman collection only created a single sound and since my recommendation endpoint wont return the sounds that recommendation is based on it would return an empty response and the Postman collection would fail. I fixed this by making the Postman collection create two sounds.
 * I did not have time to implement any unit or system/http level tests (other than the Postman test collection)
 * We do not check that sound IDs in playlists actually exist (no referential integrity there)
@@ -148,8 +148,11 @@ curl -i -H "Content-Type: application/json" -X PUT -d '{"title":"Greatest of all
 # Get playlist
 curl -s $BASE_URL/playlists/1 | jq
 
-# Get recommendations
+# Get recommendation for playlist
 curl -s $BASE_URL/sounds/recommended?playlistId=1 | jq
+
+# Get recommendation for sound
+curl -s $BASE_URL/sounds/recommended?soundId=1 | jq
 
 # Delete playlist
 curl -i -X DELETE $BASE_URL/playlists/1
