@@ -155,6 +155,9 @@ curl -s $BASE_URL/sounds/recommended?playlistId=1 | jq
 # Get recommendation for sound
 curl -s $BASE_URL/sounds/recommended?soundId=1 | jq
 
+# Get recommendation for sound without using pgvector (returns all sounds with similarity scores)
+curl -s "$BASE_URL/sounds/recommended?strategy=all&soundId=1" | jq
+
 # Delete playlist
 curl -i -X DELETE $BASE_URL/playlists/1
 

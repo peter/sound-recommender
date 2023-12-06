@@ -34,7 +34,7 @@ def get_sound_ids_and_embedding(playlistId, soundId):
 def get_pgvector_similar(openai_embedding, sound_ids, similarityMetric):
     similarity_operator = '<=>' if similarityMetric == 'cosine_similarity' else '<->'
     sort_order = 'DESC' if similarityMetric == 'cosine_similarity' else 'ASC'
-    return pg.query(f'''
+    data = pg.query(f'''
         SELECT *
         FROM {sound_model.TABLE_NAME}
         WHERE id not in %s
@@ -42,6 +42,10 @@ def get_pgvector_similar(openai_embedding, sound_ids, similarityMetric):
         ORDER BY openai_embedding {similarity_operator} %s {sort_order}
         LIMIT 3
     ''', (tuple(sound_ids), openai_embedding,))
+    for doc in data:
+        doc['euclidian_distance'] = euclidian_distance(openai_embedding, doc['openai_embedding'])
+        doc['cosine_similarity'] = cosine_similarity(openai_embedding, doc['openai_embedding'])
+    return data
 
 def get_all_similar(openai_embedding, sound_ids, similarityMetric):
     data_unsorted = pg.query(f'''
@@ -57,8 +61,11 @@ def get_all_similar(openai_embedding, sound_ids, similarityMetric):
     return list(sorted(data_unsorted, key=lambda doc: doc[similarityMetric], reverse=reverse))
 
 # Get recommended sounds from playlist or sound
+class SoundRecommendation(Sound):
+    euclidian_distance: float | None = None
+    cosine_similarity: float | None = None
 class RecommenderResponseBody(BaseModel):
-    data: list[Sound]
+    data: list[SoundRecommendation]
 @router.get("/sounds/recommended")
 def sounds_recommended(
     playlistId: int | None = None,
@@ -81,6 +88,7 @@ def sounds_recommended(
         data = get_pgvector_similar(openai_embedding, sound_ids, similarityMetric)
     elif strategy == 'all':
         data = get_all_similar(openai_embedding, sound_ids, similarityMetric)
+        print(data)
     else:
         return Response(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
     return { 'data': data }
