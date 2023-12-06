@@ -14,7 +14,13 @@ Basic song metadata CRUD API with playlists and recommendations based on playlis
 
 ## How to Evaluate this System without too much Installation
 
-Since it can be tedious/difficult to install the dependencies for this system (you need Postgres + pgvector and an OpenAI API key) you can optionally evaulate it [on Heroku](https://sound-recommender-4853b1ecaf72.herokuapp.com).
+Since it can be tedious/difficult to install the dependencies for this system (you need Postgres + pgvector and an OpenAI API key) you can optionally evaulate it [on Heroku](https://sound-recommender-4853b1ecaf72.herokuapp.com):
+
+```sh
+export BASE_URL=https://sound-recommender-4853b1ecaf72.herokuapp.com
+curl -s $BASE_URL/sounds?query=metallica | jq
+curl -s "$BASE_URL/sounds/recommended?soundId=54&limit=20" | jq 
+```
 
 In addition, if you remove the `openai_embedding` parts from the [sound model](src/models/sound.py) (i.e. lines 16 and 51) then you should be able to use all endpoints except the recommender endpoint (you will still need Postgres but you won't need pgvector or OpenAI).
 
