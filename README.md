@@ -5,6 +5,7 @@ Basic song metadata CRUD API with playlists and recommendations based on playlis
 ## Limitations/Scope/Discussion
 
 * Using OpenAPI embeddings as the recommendation engine may not be ideal (the vectors are quite large and the recommendations not super strong) but at least it's an easy way to get basic recommendation support. As an alternative to using an LLM (Large Language Model) we could have matched just on words and/or have come up with our own algorithm for sound distance that may or may not have worked better. However, such an approach would have been limited in that it does not necessarily have the semantic knowledge/relationship of words that an LLM does (i.e. which genres/artists are related etc.).
+* The original Postman collection only created a single sound and since my recommendation endpoint wont return the sounds that recommendation is based on it would return an empty response and the Postman collection would fail. I fixed this by making the Postman collection create two sounds.
 * I did not have time to implement any unit or system/http level tests (other than the Postman test collection)
 * We do not check that sound IDs in playlists actually exist (no referential integrity there)
 * I did not have time to add linting or type checking or automatic code formatting
