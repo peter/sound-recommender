@@ -9,7 +9,13 @@ Basic song metadata CRUD API with playlists and recommendations based on playlis
 * We do not check that sound IDs in playlists actually exist (no referential integrity there)
 * I did not have time to add linting or type checking or automatic code formatting
 
-## Development Setup
+## How to Evaluate this System without too much Installation
+
+Since it can be tedious/difficult to install the dependencies for this system (you need Postgres + pgvector and an OpenAI API key) you can optionally evaulate it [on Heroku](https://sound-recommender-4853b1ecaf72.herokuapp.com).
+
+In addition, if you remove the `openai_embedding` parts from the [sound model](src/models/sound.py) (i.e. lines 16 and 51) then you should be able to use all endpoints except the recommender endpoint (you will still need Postgres but you won't need pgvector or OpenAI).
+
+## Development Setup (Local Installation)
 
 Dependencies:
 
@@ -193,6 +199,9 @@ curl -s $BASE_URL/sounds | jq
 
 # Run postman tests
 BASE_URL=https://sound-recommender-4853b1ecaf72.herokuapp.com bin/test-postman
+
+# Ingest test data
+BASE_URL=https://sound-recommender-4853b1ecaf72.herokuapp.com bin/ingest-test-data
 ```
 
 ## Sound Schema
