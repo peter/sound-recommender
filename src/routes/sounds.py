@@ -11,7 +11,6 @@ router = APIRouter()
 class SoundsCreateBody(BaseModel):
     data: list[Sound]
 @router.post("/admin/sounds")
-# def sounds_create(data: list[Sound]):
 def sounds_create(body: SoundsCreateBody):
     for sound in body.data:
         id = pg.create(sound_model.TABLE_NAME, sound.to_db())

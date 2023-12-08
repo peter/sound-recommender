@@ -15,6 +15,7 @@ SCHEMA_CREATE = f'''
       credits jsonb,
       openai_embedding vector(1536),
       description TEXT,
+      description_mini TEXT,
       created_at TIMESTAMP NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMP NOT NULL DEFAULT NOW()
   );
@@ -36,6 +37,7 @@ class Sound(BaseModel):
     duration_in_seconds: int | None = None
     credits: list[Credit]
     description: str | None = None
+    description_mini: str | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
 
@@ -46,9 +48,9 @@ class Sound(BaseModel):
         if 'created_at' in doc:
          del doc['created_at']
         doc['updated_at'] = datetime.now()
-        description = sound_description(doc)
-        doc['description'] = description
-        doc['openai_embedding'] = get_openai_embedding(description)
+        doc['description'] = sound_description(doc)
+        doc['description_mini'] = sound_description_mini(doc)
+        doc['openai_embedding'] = get_openai_embedding(doc['description_mini'])
         doc['credits'] = json.dumps(doc['credits'])
         return doc
 
@@ -59,7 +61,7 @@ def credit_text(credit: dict) -> str:
       return credit['name']
 
 # Create a textual representation of a sound, something like:
-# "Sunrise by Norah Jones in genre adult standards with bpm 157"
+# "Sunrise by Norah Jones (artist) in genre adult standards with bpm 157"
 def sound_description(doc: dict) -> str:
    parts = []
    if doc['title']:
@@ -74,4 +76,17 @@ def sound_description(doc: dict) -> str:
    if doc['bpm']:
       parts.append('with bpm')
       parts.append(str(doc['bpm']))
+   return ' '.join(parts).strip()
+
+# Create a textual representation of a sound based only on artist and genre, something like:
+# "Norah Jones (Artist) in genres adult standards"
+# The idea is that artist/genre are the most relevant parts for song recommendations
+def sound_description_mini(doc: dict) -> str:
+   parts = []
+   if doc['credits']:
+      credit_strings = [credit_text(credit) for credit in doc['credits']]
+      parts.append(', '.join(credit_strings))
+   if doc['genres']:
+      parts.append('in genres')
+      parts.append(', '.join(doc['genres']))
    return ' '.join(parts).strip()
